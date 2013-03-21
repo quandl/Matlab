@@ -39,7 +39,7 @@ function [tsc] = get(code, varargin)
     % Check for authetication token in inputs or in memory.
     if size(authcode) == 0
         if isempty(auth_token)
-            'It would appear you arent using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.'
+            'It would appear you arent using an authentication token. Please visit http://www.quandl.com/help/matlab or your usage may be limited.'
         else
             string = strcat(string, '&auth_token=',auth_token);
         end
