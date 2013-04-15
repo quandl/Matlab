@@ -24,7 +24,7 @@ function [tsc] = get(code, varargin)
     p.addOptional('transformation',[]);
     p.addOptional('collapse',[]);
     p.addOptional('rows',[]);
-    p.addOptional('authcode',[]);
+    p.addOptional('authcode',Quandl.auth());
     p.parse(code,varargin{:})
     start_date = p.Results.start_date;
     end_date = p.Results.end_date;
@@ -32,27 +32,20 @@ function [tsc] = get(code, varargin)
     collapse = p.Results.collapse;
     rows = p.Results.rows;
     authcode = p.Results.authcode;
-    % Defining auth_token to be used for mutiple function calls.
-    persistent auth_token;
     
     string = strcat('http://www.quandl.com/api/v1/datasets/',code,'.csv?sort_order=asc');
     % Check for authetication token in inputs or in memory.
     if size(authcode) == 0
-        if isempty(auth_token)
-            'It would appear you arent using an authentication token. Please visit http://www.quandl.com/help/matlab or your usage may be limited.'
-        else
-            string = strcat(string, '&auth_token=',auth_token);
-        end
+        'It would appear you arent using an authentication token. Please visit http://www.quandl.com/help/matlab or your usage may be limited.'
     else
-        auth_token = authcode;
         string = strcat(string, '&auth_token=',authcode);
     end
     % Adding API options.
     if size(start_date)
-        string = strcat(string, '&trim_start=', start_date);
+        string = strcat(string, '&trim_start=', datestr(start_date, 'yyyy-mm-dd'));
     end
     if size(end_date)
-        string = strcat(string, '&trim_end=',end_date);
+        string = strcat(string, '&trim_end=', datestr(end_date, 'yyyy-mm-dd'));
     end
     if size(transformation)
         string = strcat(string, '&transformation=',transformation);
