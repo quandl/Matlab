@@ -19,7 +19,7 @@ Once you've found the data you'd like to load into MATLAB on Quandl, copy the Qu
 
 To extend your access to the Quandl API, use your authentication token. To do this sign into your account (or create one) and go to the API tab under in your account page. Then copy your authentication token next time you call the function:
 
-    >> data = Quandl.get('NSE/OIL','authcode','yourauthenticationtoken');
+    >> Quandl.auth('yourauthenticationtoken');
 
 Subsequently if you call:
 
