@@ -65,7 +65,12 @@ function [tsc] = get(code, varargin)
     % Parsing input to be passed as a time series.
     csv = strread(csv,'%s','delimiter','\n');
 
-    headers = strread(csv{1},'%s','delimiter',',');
+    try
+        headers = strread(csv{1},'%s','delimiter',',');
+    catch exception
+        error('Quandl returned an empty CSV file. (Invalid Code Likely)');
+    end
+    
     rowz = length(csv)-1;
     columns = length(headers);
 
