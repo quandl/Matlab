@@ -76,7 +76,15 @@ function [tsc] = get(code, varargin)
 
     data = zeros(rowz,columns-1);
     for i = 1:rowz
-        temp = str2num(csv{i+1}(12:end));
+        strtemp = strread(csv{i+1}(12:end), '%s', 'delimiter',',');
+        temp = zeros(1,columns-1);
+        for j = 1:(columns-1)
+            if length(strtemp{j}) == 0
+                temp(j) = NaN;
+            else
+                temp(j) = str2num(strtemp{j});
+            end
+        end
         if i == 1
             DATE = csv{i+1}(1:10);
         else
