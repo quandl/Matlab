@@ -10,6 +10,7 @@
 % transformation - Type of transformation applied to data. String. 'diff','rdiff','cumul','normalize'
 % collapse - Change frequency of data. String. 'weekly','monthly','quarterly','annual'
 % rows - Number of dates returned. Integer.
+% type - Type of data to return. Leave blank for time series. 'raw' for a cell array.
 % authcode - Authentication token used for continued API access. String.
 % Returns:
 % timeseries - If only one time series in the dataset.
@@ -24,6 +25,7 @@ function [tsc] = get(code, varargin)
     p.addOptional('transformation',[]);
     p.addOptional('collapse',[]);
     p.addOptional('rows',[]);
+    p.addOptional('type', []);
     p.addOptional('authcode',Quandl.auth());
     p.parse(code,varargin{:})
     start_date = p.Results.start_date;
@@ -31,6 +33,7 @@ function [tsc] = get(code, varargin)
     transformation = p.Results.transformation;
     collapse = p.Results.collapse;
     rows = p.Results.rows;
+    type = p.Results.type;
     authcode = p.Results.authcode;
     
     string = strcat('http://www.quandl.com/api/v1/datasets/',code,'.csv?sort_order=asc');
@@ -93,14 +96,19 @@ function [tsc] = get(code, varargin)
         data(i,:) = temp;
     end
     DATE = cellstr(DATE);
+    temp = size(type);
     % Creating time series from raw data.
-    ts = timeseries(data(:,1),DATE,'name',headers{2});
-    if columns > 2
-        tsc = tscollection({ts},'name',code);
-        for i = 2:(columns-1)
-            tsc = addts(tsc,data(:,i),headers{i+1});
+    if temp(1) == 0 || strcmp(type, 'ts')
+        ts = timeseries(data(:,1),DATE,'name',headers{2});
+        if columns > 2
+            tsc = tscollection({ts},'name',code);
+            for i = 2:(columns-1)
+                tsc = addts(tsc,data(:,i),headers{i+1});
+            end
+        else
+            tsc = ts;
         end
-    else
-        tsc = ts;
+    elseif strcmp(type, 'raw')
+        tsc = [transpose(headers);DATE, num2cell(data)]
     end
 end
