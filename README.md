@@ -49,7 +49,10 @@ There are four options for which datatype you would like your data returned as, 
 * **DataMatrix**: `('type','data')`
 * **Cell Strings**: `('type','cellstr')`
 
+As well a cell string array is returned with the headers. The syntax is as follows:
 
+    output = Quandl.get('NSE/OIL','type','fints')
+    [output headers] = Quandl.get('NSE/OIL','type','fints')
 
 
 # Examples #
