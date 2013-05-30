@@ -39,11 +39,11 @@ MATLAB will remember your authentication token for the remainder of the session.
 
 
 # Available Data Types #
-There are four options for which datatype you would like your data returned as, you choose your type as follows:
+There are four options for which datatype you would like your data returned as:
 	
 	Quandl.get('NSE/OIL','type','ts')
 
-* **Timeseries (default)**: returns a timeseries if only 1 column in data, tscollection if more. `('type','ts')`
+* **Timeseries (default)**:`('type','ts')`
 * **Financial timeseries** :`('type','fints')`
 * **CSV string**: `('type','ASCII')`
 * **DataMatrix**: `('type','data')`
