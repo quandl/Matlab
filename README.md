@@ -47,7 +47,7 @@ There are four options for which datatype you would like your data returned as, 
 * **Financial timeseries** :`('type','fints')`
 * **CSV string**: `('type','ASCII')`
 * **DataMatrix**: `('type','data')`
-* **Cell Strings**: `('type','cellstr')''
+* **Cell Strings**: `('type','cellstr')`
 
 
 
