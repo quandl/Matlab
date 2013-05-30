@@ -13,10 +13,17 @@
 % type - Type of data to return. Leave blank for time series. 'raw' for a cell array.
 % authcode - Authentication token used for continued API access. String.
 % Returns:
+% If type is blank or type = 'ts'
 % timeseries - If only one time series in the dataset.
 % tscollection - If more than one time series in the dataset.
+% Type = 'fints'
+% financial time series
+% type = ASCII
+% raw csv string
+% type = data
+% data matrx with date numbers
 
-function [tsc] = get(code, varargin)
+function [output headers] = get(code, varargin)
     % Parse input.
     p = inputParser;
     p.addRequired('code');
@@ -101,14 +108,23 @@ function [tsc] = get(code, varargin)
     if temp(1) == 0 || strcmp(type, 'ts')
         ts = timeseries(data(:,1),DATE,'name',headers{2});
         if columns > 2
-            tsc = tscollection({ts},'name',code);
+            output = tscollection({ts},'name',code);
             for i = 2:(columns-1)
-                tsc = addts(tsc,data(:,i),headers{i+1});
+                output = addts(output,data(:,i),headers{i+1});
             end
         else
-            tsc = ts;
+            output = ts;
         end
-    elseif strcmp(type, 'raw')
-        tsc = [transpose(headers);DATE, num2cell(data)]
+    elseif strcmp(type, 'cellstr')
+        output = [transpose(headers);DATE, num2cell(data)];
+    elseif strcmp(type, 'ASCII')
+        output = csv;
+    elseif strcmp(type, 'fints')
+        sanitized_headers = regexprep(regexprep(headers(2:end),' ','_'), '[^A-Z0-9a-z_]', '')
+        output = fints(datenum(DATE), data, sanitized_headers);
+    elseif strcmp(type, 'data')
+        output = [datenum(DATE) data];
+    else
+        error('Invalid format');
     end
 end
