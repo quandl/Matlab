@@ -97,7 +97,6 @@ function [output headers] = get(code, varargin)
         else
             DATE = char(DATE,csv{i+1}(1:10));
         end
-        temp
         data(i,:) = temp;
     end
     DATE = cellstr(DATE);
