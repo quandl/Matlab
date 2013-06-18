@@ -86,20 +86,18 @@ function [output headers] = get(code, varargin)
 
     data = zeros(rowz,columns-1);
     for i = 1:rowz
-        strtemp = strread(csv{i+1}(12:end), '%s', 'delimiter',',');
-        temp = zeros(1,columns-1);
-        for j = 1:(columns-1)
-            if length(strtemp{j}) == 0
-                temp(j) = NaN;
-            else
-                temp(j) = str2num(strtemp{j});
-            end
+        temp = textscan(csv{i+1}(12:end), '%f', 'Delimiter',',');
+        temp = temp{1};
+        temp = transpose(temp);
+        if strcmp(csv{i+1}(end),',') %Matlab does not catch delimiters at end of line.
+            temp = [temp, NaN];
         end
         if i == 1
             DATE = csv{i+1}(1:10);
         else
             DATE = char(DATE,csv{i+1}(1:10));
         end
+        temp
         data(i,:) = temp;
     end
     DATE = cellstr(DATE);
