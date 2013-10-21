@@ -9,9 +9,9 @@ For more information please contact raymond@quandl.com
 
 # Installation #
 
-Download the folder "+Quandl" into the directory of your choice. Then within MATLAB go to file >> Set path... and add the directory to the list (if it isn't already). That's it.
+Download the folder "+Quandl" into the directory of your choice. Then within MATLAB go to file >> Set path... and add the directory containing "+Quandl" to the list (if it isn't already). That's it.
 
-It should be noted that the '+' in "+Quandl" is important in the folder name. It tells Matlab to recognize get.m and auth.m as part of the Quandl package.
+Two things to note, the '+' in "+Quandl" is important in the folder name. It tells Matlab to recognize get.m and auth.m as part of the Quandl package. Secondly, make sure you don't add the "+Quandl" folder in set path. You should be adding the folder that contains it.
 
 # Usage #
 
