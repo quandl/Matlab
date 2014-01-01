@@ -43,20 +43,28 @@ function [output headers] = get(code, varargin)
     type = p.Results.type;
     authcode = p.Results.authcode;
     
-    if strcmp(class(code), 'char')
-        string = strcat('http://www.quandl.com/api/v1/datasets/',code,'.csv?sort_order=asc');
-    elseif strcmp(class(code), 'cell') 
-        if prod(size(code)) == 1
-            string = strcat('http://www.quandl.com/api/v1/datasets/',code,'.csv?sort_order=asc');
-        else
-            code = regexprep(code, '/', '.')
-            for i = 2:length(code)
-                code{i} = strcat(',', code{i});
-            end
-            string = strcat('http://www.quandl.com/api/v1/multisets.csv?columns=',[code{:}], '&sort_order=asc');
+    if strcmp(class(code), 'char') || (strcmp(class(code), 'cell') && prod(size(code)) == 1)
+        if strcmp(class(code), 'cell')
+            code = code{1};
         end
+        code = regexprep(code, '\.', '/');
+        if regexp(code, '.+\/.+\/.+')
+            code = regexprep(code, '/', '.');
+            string = strcat('http://www.quandl.com/api/v1/multisets.csv?columns=', code, '&sort_order=asc');
+            % col = code(regexp(code, '(?<=\/)[^\/]+$'):end);
+            % code = regexprep(code, '\/[^\/]+$', '');
+            % string = strcat('http://www.quandl.com/api/v1/datasets/',code,'.csv?column=', col, '&sort_order=asc');
+        else
+            string = strcat('http://www.quandl.com/api/v1/datasets/',code,'.csv?sort_order=asc');
+        end
+    elseif strcmp(class(code), 'cell') 
+        code = regexprep(code, '/', '.');
+        for i = 2:length(code)
+            code{i} = strcat(',', code{i});
+        end
+        string = strcat('http://www.quandl.com/api/v1/multisets.csv?columns=',[code{:}], '&sort_order=asc');
     end
-        
+    % string
     % Check for authetication token in inputs or in memory.
     if size(authcode) == 0
         'It would appear you arent using an authentication token. Please visit http://www.quandl.com/help/matlab or your usage may be limited.'
