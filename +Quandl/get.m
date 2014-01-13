@@ -104,8 +104,11 @@ function [output headers] = get(code, varargin)
     
     rowz = length(csv)-1;
     columns = length(headers);
+    if columns > 101 && length(regexp(string,'multisets','match')) > 0
+        'Maximum column length for multisets is 100 columns.'
+        headers = headers(1:101);
+    end
 
-    data = zeros(rowz,columns-1);
     for i = 1:rowz
         temp = textscan(csv{i+1}(12:end), '%f', 'Delimiter',',');
         temp = temp{1};
