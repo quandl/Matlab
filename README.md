@@ -3,7 +3,7 @@ MATLAB-package
 
 This is Quandl's MATLAB Package
 
-License: GPL-2
+License: MIT
 
 For more information please contact raymond@quandl.com
 
