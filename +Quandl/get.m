@@ -42,54 +42,55 @@ function [output headers] = get(code, varargin)
     rows = p.Results.rows;
     type = p.Results.type;
     authcode = p.Results.authcode;
-    
+    params = containers.Map();
     if strcmp(class(code), 'char') || (strcmp(class(code), 'cell') && prod(size(code)) == 1)
         if strcmp(class(code), 'cell')
             code = code{1};
         end
-        code = regexprep(code, '\.', '/');
         if regexp(code, '.+\/.+\/.+')
-            code = regexprep(code, '/', '.');
-            string = strcat('http://www.quandl.com/api/v1/multisets.csv?columns=', code, '&sort_order=asc');
-            % col = code(regexp(code, '(?<=\/)[^\/]+$'):end);
-            % code = regexprep(code, '\/[^\/]+$', '');
-            % string = strcat('http://www.quandl.com/api/v1/datasets/',code,'.csv?column=', col, '&sort_order=asc');
-        else
-            string = strcat('http://www.quandl.com/api/v1/datasets/',code,'.csv?sort_order=asc');
+            code = regexprep(code, '\/(?=[^\/]+$)', '.');
         end
+        if regexp(code, '\.')
+            col = code(regexp(code, '(?<=\.).+$'):end);
+            code = regexprep(code, '\..+$', '');
+            params('column') = num2str(col);
+        end
+        path = strcat('datasets/', code, '.csv');
     elseif strcmp(class(code), 'cell') 
         code = regexprep(code, '/', '.');
         for i = 2:length(code)
             code{i} = strcat(',', code{i});
         end
-        string = strcat('http://www.quandl.com/api/v1/multisets.csv?columns=',[code{:}], '&sort_order=asc');
+        params('columns') = [code{:}];
+        path = 'multisets.csv';
     end
+    params('sort_order') = 'asc';
     % string
     % Check for authetication token in inputs or in memory.
     if size(authcode) == 0
         'It would appear you arent using an authentication token. Please visit http://www.quandl.com/help/matlab or your usage may be limited.'
     else
-        string = strcat(string, '&auth_token=',authcode);
+        params('auth_token') = authcode;
     end
     % Adding API options.
     if size(start_date)
-        string = strcat(string, '&trim_start=', datestr(start_date, 'yyyy-mm-dd'));
+        params('trim_start') = datestr(start_date, 'yyyy-mm-dd');
     end
     if size(end_date)
-        string = strcat(string, '&trim_end=', datestr(end_date, 'yyyy-mm-dd'));
+        params('trim_end') = datestr(end_date, 'yyyy-mm-dd');
     end
     if size(transformation)
-        string = strcat(string, '&transformation=',transformation);
+        params('transformation') = transformation;
     end
     if size(collapse)
-        string = strcat(string, '&collapse=',collapse);
+        params('collapse=') = collapse;
     end
     if size(rows)
-        string = strcat(string, '&rows=',num2str(rows));
+        params('rows') = num2str(rows);
     end
     % Loading csv and checking if it exists.
     try
-        csv = urlread(string);
+        csv = Quandl.api(path, 'params', params);
     catch
         error('Quandl:code','Code does not exist.')
     end
@@ -137,7 +138,9 @@ function [output headers] = get(code, varargin)
             output = ts;
         end
     elseif strcmp(type, 'cellstr')
-        output = [transpose(headers);DATE, num2cell(data)];
+        % output = [transpose(headers);DATE, num2cell(data)];
+        % output = [transpose(headers);DATE, data];
+        output = [DATE, data];
     elseif strcmp(type, 'ASCII')
         output = csv;
     elseif strcmp(type, 'fints')
