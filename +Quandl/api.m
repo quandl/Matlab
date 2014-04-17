@@ -1,4 +1,4 @@
-function output = get(path, varargin)
+function output = api(path, varargin)
   % Parse input.
   p = inputParser;
   p.addRequired('path');
@@ -21,7 +21,6 @@ function output = get(path, varargin)
   for i = 1:length(params.keys)
     url = strcat(url, '&', param_keys{i}, '=', param_values{i});
   end
-  url
   if length(regexp(path, '.csv'))
     output = urlread(url);
   elseif length(regexp(path, '.xml'))
