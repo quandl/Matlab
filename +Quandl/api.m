@@ -1,4 +1,4 @@
-function output = get(path, varargin)
+function output = api(path, varargin)
   % Parse input.
   p = inputParser;
   p.addRequired('path');
