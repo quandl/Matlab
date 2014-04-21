@@ -65,6 +65,15 @@ As well a cell string array is returned with the headers. The syntax is as follo
     >> ts.TimeInfo.Format = 'yyyy-mm';
     >> plot(ts);
 
+# ALPHA #
+
+You can now search inside the Matlab Console
+
+    >> Quandl.search('crude oil');
+    >> Quandl.serach('crude oil', 'results', 10, 'page', 3);
+
+It is currently in **ALPHA** and only returns an xml object to the top node of the query results.
+
 # Additional Resources #
     
 More help can be found at [Quandl](http://www.quandl.com) in our [MATLAB](http://www.quandl.com/help/packages/matlab) and [API](http://www.quandl.com/help/api) help pages.
