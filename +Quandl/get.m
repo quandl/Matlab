@@ -104,6 +104,9 @@ function [output headers] = get(code, varargin)
     end
     
     rowz = length(csv)-1;
+    if rowz == 0
+        error('Dataset is empty')
+    end
     columns = length(headers);
     if columns > 101 && length(regexp(string,'multisets','match')) > 0
         'Maximum column length for multisets is 100 columns.'
