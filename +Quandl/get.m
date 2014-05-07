@@ -108,8 +108,8 @@ function [output headers] = get(code, varargin)
         error('Dataset is empty')
     end
     columns = length(headers);
-    if columns > 101 && length(regexp(string,'multisets','match')) > 0
-        'Maximum column length for multisets is 100 columns.'
+    if columns > 1001 && length(regexp(string,'multisets','match')) > 0
+        'Maximum column length for multisets is 1000 columns.'
         headers = headers(1:101);
     end
 
