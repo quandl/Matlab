@@ -91,7 +91,7 @@ function [output headers] = get(code, varargin)
         params('transformation') = transformation;
     end
     if size(collapse)
-        params('collapse=') = collapse;
+        params('collapse') = collapse;
     end
     if size(rows)
         params('rows') = num2str(rows);
