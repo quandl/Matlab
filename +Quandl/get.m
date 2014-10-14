@@ -27,8 +27,10 @@ function [output headers] = get(code, varargin)
     % Parse input.
     p = inputParser;
     p.addRequired('code');
-    p.addOptional('start_date',[]);
+    p.addOptional('start_date',[]); % To be deprecated
+    p.addOptional('trim_start',[]); % To be deprecated
     p.addOptional('end_date',[]);
+    p.addOptional('trim_end',[]);
     p.addOptional('transformation',[]);
     p.addOptional('collapse',[]);
     p.addOptional('rows',[]);
@@ -37,6 +39,12 @@ function [output headers] = get(code, varargin)
     p.parse(code,varargin{:})
     start_date = p.Results.start_date;
     end_date = p.Results.end_date;
+    if size(start_date) == 0
+        start_date = p.Results.trim_start;
+    end
+    if size(end_date) == 0
+        end_date = p.Results.trim_end;
+    end
     transformation = p.Results.transformation;
     collapse = p.Results.collapse;
     rows = p.Results.rows;
@@ -83,7 +91,7 @@ function [output headers] = get(code, varargin)
         params('transformation') = transformation;
     end
     if size(collapse)
-        params('collapse=') = collapse;
+        params('collapse') = collapse;
     end
     if size(rows)
         params('rows') = num2str(rows);
@@ -108,8 +116,8 @@ function [output headers] = get(code, varargin)
         error('Dataset is empty')
     end
     columns = length(headers);
-    if columns > 101 && length(regexp(string,'multisets','match')) > 0
-        'Maximum column length for multisets is 100 columns.'
+    if columns > 1001 && length(regexp(string,'multisets','match')) > 0
+        'Maximum column length for multisets is 1000 columns.'
         headers = headers(1:101);
     end
 
