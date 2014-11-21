@@ -70,7 +70,7 @@ As well a cell string array is returned with the headers. The syntax is as follo
 You can now search inside the Matlab Console
 
     >> Quandl.search('crude oil');
-    >> Quandl.serach('crude oil', 'results', 10, 'page', 3);
+    >> Quandl.search('crude oil', 'results', 10, 'page', 3);
 
 It is currently in **ALPHA** and only returns an xml object to the top node of the query results.
 
