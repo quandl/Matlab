@@ -72,7 +72,7 @@ function [output headers] = get(code, varargin)
         params('columns') = [code{:}];
         path = 'multisets.csv';
     end
-    params('sort_order') = 'asc';
+    params('sort_order') = 'desc';
     % string
     % Check for authetication token in inputs or in memory.
     if size(authcode) == 0
