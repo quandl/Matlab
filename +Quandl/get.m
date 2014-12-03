@@ -104,9 +104,9 @@ function [output headers] = get(code, varargin)
     end
     % Parsing input to be passed as a time series.
     csv = strread(csv,'%s','delimiter','\n');
-
+    pattern = '("[^"]*"|[^,]*)';
     try
-        headers = strread(csv{1},'%s','delimiter',',');
+        headers = regexp(csv{1}, pattern, 'match');
     catch exception
         error('Quandl returned an empty CSV file. (Invalid Code Likely)');
     end
