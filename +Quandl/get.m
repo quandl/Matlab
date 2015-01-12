@@ -143,7 +143,7 @@ function [output headers] = get(code, varargin)
         if columns > 2
             output = tscollection({ts},'name',code);
             for i = 2:(columns-1)
-                output = addts(output,data(:,i),headers{i+1});
+                output = addts(output,flipud(data(:,i)),headers{i+1});
             end
         else
             output = ts;
