@@ -94,7 +94,7 @@ function [output headers] = get(code, varargin)
         params('columns') = [code{:}];
         path = 'multisets.csv';
     end
-    params('sort_order') = 'asc';
+    params('sort_order') = 'desc';
     % string
     % Check for authetication token in inputs or in memory.
     if size(authcode) == 0
@@ -127,8 +127,10 @@ function [output headers] = get(code, varargin)
     % Parsing input to be passed as a time series.
     csv = strread(csv,'%s','delimiter','\n');
 
+    pattern = '("[^"]*"|[^,]*)';
     try
-        headers = strread(csv{1},'%s','delimiter',',');
+        % headers = strread(csv{1},'%s','delimiter',',');
+        headers = regexp(csv{1}, pattern, 'match');
     catch exception
         error('Quandl returned an empty CSV file. (Invalid Code Likely)');
     end
@@ -165,7 +167,7 @@ function [output headers] = get(code, varargin)
         if columns > 2
             output = tscollection({ts},'name',code);
             for i = 2:(columns-1)
-                output = addts(output,data(:,i),headers{i+1});
+                output = addts(output,flipud(data(:,i)),headers{i+1});
             end
         else
             output = ts;
