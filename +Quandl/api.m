@@ -15,7 +15,7 @@ function output = api(path, varargin)
   params('request_version') = '1.1.1';
 
   
-  url = strcat('http://www.quandl.com/api/', version, '/', path, '?');
+  url = strcat('https://www.quandl.com/api/', version, '/', path, '?');
   param_keys = params.keys;
   param_values = params.values;
   for i = 1:length(params.keys)
