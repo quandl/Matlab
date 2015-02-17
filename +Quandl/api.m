@@ -22,8 +22,14 @@ function output = api(path, varargin)
     url = strcat(url, '&', param_keys{i}, '=', param_values{i});
   end
   if length(regexp(path, '.csv'))
-    output = urlread(url);
+    [response, extras] = urlread2.urlread2(url);
   elseif length(regexp(path, '.xml'))
     output = xmlread(url);
+    return
   end
+  status_regex = regexp(cellstr(extras.allHeaders.Status), '200', 'match');
+  if isempty(status_regex{1})
+    error('Quandl:api', response)
+  end
+  output = response;
 end

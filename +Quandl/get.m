@@ -5,6 +5,17 @@
 % Required:
 % code - Quandl code of dataset wanted. String.
 % Optional:
+% start_date - Date of first data point wanted. String. 'yyyy-mm-dd'% Package: Quandl
+% Function: get
+% Pulls data from the Quandl API.
+% Inputs:
+% Required:% Package: Quandl
+% Function: get
+% Pulls data from the Quandl API.
+% Inputs:
+% Required:
+% code - Quandl code of dataset wanted. String.
+% Optional:
 % start_date - Date of first data point wanted. String. 'yyyy-mm-dd'
 % end_date - Date of last data point wanted. String. 'yyyy-mm-dd'
 % transformation - Type of transformation applied to data. String. 'diff','rdiff','cumul','normalize'
@@ -34,7 +45,7 @@ function [output headers] = get(code, varargin)
     p.addOptional('transformation',[]);
     p.addOptional('collapse',[]);
     p.addOptional('rows',[]);
-    p.addOptional('type', []);
+    p.addOptional('type', 'ts');
     p.addOptional('authcode',Quandl.auth());
     p.parse(code,varargin{:})
     start_date = p.Results.start_date;
@@ -49,6 +60,17 @@ function [output headers] = get(code, varargin)
     collapse = p.Results.collapse;
     rows = p.Results.rows;
     type = p.Results.type;
+    [met, missing] = Quandl.dependencies();
+    if ~met && ismember(type, missing)
+        switch type
+        case 'ts'
+            error_msg = 'This output type requires the Econometric Toolbox.';
+        case 'fints'
+            error_msg = 'This output type requires the Financial Toolbox.';
+        end
+        error('Quandl:Depenency', strcat(error_msg, ' Please see http://www.quandl.com/help/matlab for more information, or pick another output type.'));
+    end
+
     authcode = p.Results.authcode;
     params = containers.Map();
     if strcmp(class(code), 'char') || (strcmp(class(code), 'cell') && prod(size(code)) == 1)
@@ -97,15 +119,22 @@ function [output headers] = get(code, varargin)
         params('rows') = num2str(rows);
     end
     % Loading csv and checking if it exists.
-    try
-        csv = Quandl.api(path, 'params', params);
-    catch
-        error('Quandl:code','Code does not exist.')
-    end
+    % try
+    csv = Quandl.api(path, 'params', params);
+    % catch
+    %     error('Quandl:code','Code does not exist.')
+    % end
     % Parsing input to be passed as a time series.
     csv = strread(csv,'%s','delimiter','\n');
+<<<<<<< HEAD
     pattern = '("[^"]*"|[^,]*)';
     try
+=======
+
+    pattern = '("[^"]*"|[^,]*)';
+    try
+        % headers = strread(csv{1},'%s','delimiter',',');
+>>>>>>> develop
         headers = regexp(csv{1}, pattern, 'match');
     catch exception
         error('Quandl returned an empty CSV file. (Invalid Code Likely)');
@@ -163,3 +192,4 @@ function [output headers] = get(code, varargin)
         error('Invalid format');
     end
 end
+
