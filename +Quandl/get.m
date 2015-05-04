@@ -47,6 +47,7 @@ function [output headers] = get(code, varargin)
     p.addOptional('rows',[]);
     p.addOptional('type', 'ts');
     p.addOptional('authcode',Quandl.auth());
+    p.addOptional('sort_order', 'desc');
     p.parse(code,varargin{:})
     start_date = p.Results.start_date;
     end_date = p.Results.end_date;
@@ -94,7 +95,11 @@ function [output headers] = get(code, varargin)
         params('columns') = [code{:}];
         path = 'multisets.csv';
     end
-    params('sort_order') = 'desc';
+    if any(ismember({'ts', 'fints'}, type))
+        params('sort_order') = 'desc';
+    else
+        params('sort_order') = p.Results.sort_order;
+    end
     % string
     % Check for authetication token in inputs or in memory.
     if size(authcode) == 0
@@ -173,7 +178,7 @@ function [output headers] = get(code, varargin)
     elseif strcmp(type, 'cellstr')
         % output = [transpose(headers);DATE, num2cell(data)];
         % output = [transpose(headers);DATE, data];
-        output = [DATE, data];
+        output = [DATE num2cell(data)];
     elseif strcmp(type, 'ASCII')
         output = csv;
     elseif strcmp(type, 'fints')
