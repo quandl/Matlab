@@ -22,7 +22,7 @@ function output = api(path, varargin)
     url = strcat(url, '&', param_keys{i}, '=', param_values{i});
   end
   if length(regexp(path, '.csv'))
-    [response, extras] = urlread2.urlread2(url);
+    [response, extras] = urlread2(url);
   elseif length(regexp(path, '.xml'))
     output = xmlread(url);
     return
