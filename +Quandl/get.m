@@ -179,6 +179,14 @@ function [output headers] = get(code, varargin)
         output = csv;
     elseif strcmp(type, 'fints')
         sanitized_headers = regexprep(regexprep(headers(2:end),' ','_'), '[^A-Z0-9a-z_]', '')
+        for i = 1:length(sanitized_headers)
+            sanitized_header = sanitized_headers{i};
+            results = regexp(sanitized_header, '^(\d+)(.+)', 'tokens');
+            if length(results) > 0
+                sanitized_header = [results{1}{2} results{1}{1}];
+            end
+            sanitized_headers{i} = sanitized_header;
+        end
         output = fints(datenum(DATE), data, sanitized_headers);
     elseif strcmp(type, 'data')
         output = [datenum(DATE) data];
