@@ -12,7 +12,7 @@ function output = api(path, varargin)
   params = p.Results.params;
 
   params('request_source') = 'matlab';
-  params('request_version') = '1.1.1';
+  params('request_version') = '1.1.2';
 
   
   url = strcat('https://www.quandl.com/api/', version, '/', path, '?');
