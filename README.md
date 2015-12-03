@@ -84,4 +84,4 @@ It is currently in **ALPHA** and only returns an xml object to the top node of t
 
 # Additional Resources #
     
-More help can be found at [Quandl](http://www.quandl.com) in our [MATLAB](http://www.quandl.com/help/packages/matlab) and [API](http://www.quandl.com/help/api) help pages.
+More help can be found at [Quandl](https://www.quandl.com) in our [API](https://www.quandl.com/docs/api) docs.
