@@ -37,9 +37,6 @@ Subsequently when you call:
 
 MATLAB will remember your authentication token for the remainder of the session.
 
-You can combine multiple datasets into one multiset via matlab now by passing a cell array of codes.
-    
-    >> data = Quandl.get({'NSE/OIL/1' 'NSE/OIL/2'});
 
 ### Parameters ###
 
