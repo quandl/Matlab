@@ -2,29 +2,39 @@ function output = api(path, varargin)
   % Parse input.
   p = inputParser;
   p.addRequired('path');
-  p.addOptional('version','v1');
+  p.addOptional('version','v3');
   p.addOptional('http','GET');
   p.addOptional('params',containers.Map());
-  p.parse(path,varargin{:})
+  p.parse(path,varargin{:});
   path = p.Results.path;
   version = p.Results.version;
   http = p.Results.http;
   params = p.Results.params;
+  headers = [struct('name','Request-Source','value','matlab') struct('name','Request-Version','value','2.0.0')];
+  if size(Quandl.api_key()) ~= 0
+    params('api_key') = Quandl.api_key();
+    headers = [headers struct('name', 'X-Api-Token', 'value', Quandl.api_key())];
+  end
+  % params('request_source') = 'matlab';
+  % params('request_version') = '1.1.2';
 
-  params('request_source') = 'matlab';
-  params('request_version') = '1.1.2';
-
-  
   url = strcat('https://www.quandl.com/api/', version, '/', path, '?');
   
   param_keys = params.keys;
   param_values = params.values;
   for i = 1:length(params.keys)
-    url = strcat(url, '&', param_keys{i}, '=', param_values{i});
+    if (length(param_values{i}) > 1) & (~strcmp(class(param_values{i}), 'char'))
+      p_values = param_values{i};
+      for j = 1:length(p_values)
+        url = strcat(url, '&', param_keys{i}, '[]=', p_values{j});
+      end
+    else
+      url = strcat(url, '&', param_keys{i}, '=', param_values{i});
+    end
   end
 
   if length(regexp(path, '.csv'))
-    [response, extras] = urlread2.urlread2(url);
+    [response, extras] = urlread2.urlread2(url, 'GET', '', headers);
   elseif length(regexp(path, '.xml'))
     output = xmlread(url);
     return
@@ -33,6 +43,12 @@ function output = api(path, varargin)
   status_regex = regexp(cellstr(extras.allHeaders.Response), '200', 'match');
   if isempty(status_regex{1})
     error('Quandl:api', response)
+  end
+  if isfield(extras.allHeaders, 'Cursor_ID')
+    params('qopts.cursor_id') = char(extras.allHeaders.Cursor_ID);
+    params('qopts.exclude_column_names') = 'true';
+    temp_response = Quandl.api(path, 'params', params, 'http', http, 'version', version);
+    response = sprintf('%s%s',response , temp_response{2:end});
   end
   output = response;
 end
