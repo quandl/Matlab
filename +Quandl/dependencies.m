@@ -12,7 +12,7 @@ function [met, missing] = dependencies(varargin)
         % check dependencies
         dependencies_met = true;
         if ~exist('+urlread2/urlread2.m')
-            error('Quandl:Dependency', 'This module requires urlread2. Go to http://www.quandl.com/help/matlab for more information')
+            error('Quandl:Dependency', 'This module requires urlread2. Go to http://www.github.com/quandl/Matlab for more information')
         end
         if ~exist('timeseries')
             dependencies_missing = [ dependencies_missing, 'ts' ];

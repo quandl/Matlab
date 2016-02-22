@@ -47,6 +47,7 @@ function [output headers] = get(code, varargin)
     p.addOptional('rows',[]);
     p.addOptional('type', 'ts');
     p.addOptional('authcode',Quandl.auth());
+    p.addOptional('sort_order', 'desc');
     p.parse(code,varargin{:})
     start_date = p.Results.start_date;
     end_date = p.Results.end_date;
@@ -94,7 +95,7 @@ function [output headers] = get(code, varargin)
         params('columns') = [code{:}];
         path = 'multisets.csv';
     end
-    params('sort_order') = 'desc';
+    params('sort_order') = p.Results.sort_order;
     % string
     % Check for authetication token in inputs or in memory.
     if size(authcode) == 0
@@ -126,10 +127,8 @@ function [output headers] = get(code, varargin)
     % end
     % Parsing input to be passed as a time series.
     csv = strread(csv,'%s','delimiter','\n');
-
     pattern = '("[^"]*"|[^,]*)';
     try
-        % headers = strread(csv{1},'%s','delimiter',',');
         headers = regexp(csv{1}, pattern, 'match');
     catch exception
         error('Quandl returned an empty CSV file. (Invalid Code Likely)');
@@ -175,11 +174,19 @@ function [output headers] = get(code, varargin)
     elseif strcmp(type, 'cellstr')
         % output = [transpose(headers);DATE, num2cell(data)];
         % output = [transpose(headers);DATE, data];
-        output = [DATE, data];
+        output = [DATE num2cell(data)];
     elseif strcmp(type, 'ASCII')
         output = csv;
     elseif strcmp(type, 'fints')
         sanitized_headers = regexprep(regexprep(headers(2:end),' ','_'), '[^A-Z0-9a-z_]', '')
+        for i = 1:length(sanitized_headers)
+            sanitized_header = sanitized_headers{i};
+            results = regexp(sanitized_header, '^(\d+)(.+)', 'tokens');
+            if length(results) > 0
+                sanitized_header = [results{1}{2} results{1}{1}];
+            end
+            sanitized_headers{i} = sanitized_header;
+        end
         output = fints(datenum(DATE), data, sanitized_headers);
     elseif strcmp(type, 'data')
         output = [datenum(DATE) data];

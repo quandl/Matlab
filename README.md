@@ -9,9 +9,17 @@ For more information please contact raymond@quandl.com
 
 # Installation #
 
+
+
 Download the folder "+Quandl" into the directory of your choice. Then within MATLAB go to file >> Set path... and add the directory containing "+Quandl" to the list (if it isn't already). That's it.
 
 Two things to note, the '+' in "+Quandl" is important in the folder name. It tells Matlab to recognize get.m and auth.m as part of the Quandl package. Secondly, make sure you don't add the "+Quandl" folder in set path. You should be adding the folder that contains it.
+
+## Dependencies ##
+
+This package now REQUIRES urlread2. It can be found [here](http://www.mathworks.com/matlabcentral/fileexchange/35693-urlread2).
+
+Unzip the package and place it in the same directory as +Quandl in the folder +urlread2.
 
 # Usage #
 
@@ -29,9 +37,6 @@ Subsequently when you call:
 
 MATLAB will remember your authentication token for the remainder of the session.
 
-You can combine multiple datasets into one multiset via matlab now by passing a cell array of codes.
-    
-    >> data = Quandl.get({'NSE/OIL/1' 'NSE/OIL/2'});
 
 ### Parameters ###
 
@@ -70,10 +75,10 @@ As well a cell string array is returned with the headers. The syntax is as follo
 You can now search inside the Matlab Console
 
     >> Quandl.search('crude oil');
-    >> Quandl.serach('crude oil', 'results', 10, 'page', 3);
+    >> Quandl.search('crude oil', 'results', 10, 'page', 3);
 
 It is currently in **ALPHA** and only returns an xml object to the top node of the query results.
 
 # Additional Resources #
     
-More help can be found at [Quandl](http://www.quandl.com) in our [MATLAB](http://www.quandl.com/help/packages/matlab) and [API](http://www.quandl.com/help/api) help pages.
+More help can be found at [Quandl](https://www.quandl.com) in our [API](https://www.quandl.com/docs/api) docs.

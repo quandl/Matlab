@@ -12,22 +12,25 @@ function output = api(path, varargin)
   params = p.Results.params;
 
   params('request_source') = 'matlab';
-  params('request_version') = '1.1.1';
+  params('request_version') = '1.1.2';
 
   
-  url = strcat('http://www.quandl.com/api/', version, '/', path, '?');
+  url = strcat('https://www.quandl.com/api/', version, '/', path, '?');
+  
   param_keys = params.keys;
   param_values = params.values;
   for i = 1:length(params.keys)
     url = strcat(url, '&', param_keys{i}, '=', param_values{i});
   end
+
   if length(regexp(path, '.csv'))
     [response, extras] = urlread2.urlread2(url);
   elseif length(regexp(path, '.xml'))
     output = xmlread(url);
     return
   end
-  status_regex = regexp(cellstr(extras.allHeaders.Status), '200', 'match');
+  
+  status_regex = regexp(cellstr(extras.allHeaders.Response), '200', 'match');
   if isempty(status_regex{1})
     error('Quandl:api', response)
   end
