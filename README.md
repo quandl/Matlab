@@ -7,7 +7,7 @@ License: MIT
 
 For more information please contact raymond@quandl.com
 
-# Installation #
+## Installation ##
 
 
 
@@ -15,21 +15,21 @@ Download the folder "+Quandl" into the directory of your choice. Then within MAT
 
 Two things to note, the '+' in "+Quandl" is important in the folder name. It tells Matlab to recognize get.m and auth.m as part of the Quandl package. Secondly, make sure you don't add the "+Quandl" folder in set path. You should be adding the folder that contains it.
 
-## Dependencies ##
+### Dependencies ###
 
 This package now REQUIRES urlread2. It can be found [here](http://www.mathworks.com/matlabcentral/fileexchange/35693-urlread2).
 
 Unzip the package and place it in the same directory as +Quandl in the folder +urlread2.
 
-# Usage #
+## Usage ##
 
 Once you've found the data you'd like to load into MATLAB on Quandl, copy the Quandl code from the description box and past it into the function.
 
     >> data = Quandl.get('NSE/OIL');
 
-To extend your access to the Quandl API, use your authentication token. To do this sign into your account (or create one) and go to the API tab under in your account page. Then copy your authentication token next time you call the function:
+To extend your access to the Quandl API, use your api key. To do this sign into your account (or create one) and go to [account settings page](https://www.quandl.com/account/api). Then copy your api key next time you call the function:
 
-    >> Quandl.auth('yourauthenticationtoken');
+    >> Quandl.api_key('yourauthenticationtoken');
 
 Subsequently when you call:
 
@@ -46,7 +46,7 @@ MATLAB will remember your authentication token for the remainder of the session.
 * Return only n number of rows: `mydata = Quandl.get('NSE/OIL','rows',5);`
 
 
-# Available Data Types #
+## Available Data Types ##
 There are four options for which datatype you would like your data returned as, you choose your type as follows:
 	
 	Quandl.get('NSE/OIL','type','ts')
@@ -63,14 +63,32 @@ As well a cell string array is returned with the headers. The syntax is as follo
     [output headers] = Quandl.get('NSE/OIL','type','fints')
 
 
-# Examples #
+## Examples ##
 
     >> data = Quandl.get('NSE/OIL','collapse','monthly');
     >> ts = data.Open;
     >> ts.TimeInfo.Format = 'yyyy-mm';
     >> plot(ts);
 
-# ALPHA #
+## Datatables ##
+
+To access datatables from the datatables api, you can use the Quandl.datatables function:
+
+    data = Quandl.datatable('ZACKS/EE')
+
+It returns data in a table.
+
+### Parameters ###
+
+Parameters are specific to each datatable. This datatable's filter parameters are `ticker`, `per_type`, `per_end_date` and `qopts.columns`. The following function call returns the columns, per_end_date, per_type and eps_meant_est for all rows which ticker = AAPL.
+
+    data = Quandl.datatable('ZACKS/EE', 'ticker', 'AAPL', 'qopts.columns', {'per_end_date', 'per_type', 'eps_mean_est'})
+
+This call returns all data for Apple and Microsoft:
+
+    data = Quandl.datatable('ZACKS/EE', 'ticker', {'AAPL', 'MSFT'})
+
+## ALPHA ##
 
 You can now search inside the Matlab Console
 
@@ -79,6 +97,6 @@ You can now search inside the Matlab Console
 
 It is currently in **ALPHA** and only returns an xml object to the top node of the query results.
 
-# Additional Resources #
+## Additional Resources ##
     
 More help can be found at [Quandl](https://www.quandl.com) in our [API](https://www.quandl.com/docs/api) docs.
