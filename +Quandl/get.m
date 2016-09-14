@@ -46,7 +46,7 @@ function [output headers] = get(code, varargin)
     p.addOptional('collapse',[]);
     p.addOptional('rows',[]);
     p.addOptional('type', 'ts');
-    p.addOptional('authcode',Quandl.auth());
+    p.addOptional('authcode',Quandl.api_key());
     p.addOptional('sort_order', 'desc');
     p.parse(code,varargin{:})
     start_date = p.Results.start_date;
@@ -171,10 +171,14 @@ function [output headers] = get(code, varargin)
         else
             output = ts;
         end
-    elseif strcmp(type, 'cellstr')
+    elseif strcmp(type, 'cell') | strcmp(type, 'cellstr')
         % output = [transpose(headers);DATE, num2cell(data)];
         % output = [transpose(headers);DATE, data];
         output = [DATE num2cell(data)];
+
+    elseif strcmp(type, 'table')
+        output = cell2table([DATE num2cell(data)], 'VariableNames', matlab.lang.makeValidName(headers));
+
     elseif strcmp(type, 'ASCII')
         output = csv;
     elseif strcmp(type, 'fints')
