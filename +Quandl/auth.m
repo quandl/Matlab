@@ -6,8 +6,8 @@ function [outputcode] = auth(varargin)
     authcode = p.Results.authcode;
     persistent auth_token;
     if size(authcode) ~= 0
-        auth_token = authcode;
+        Quandl.api_key(authcode);
     end
-    outputcode = auth_token;
+    outputcode = Quandl.api_key();
 end
 
