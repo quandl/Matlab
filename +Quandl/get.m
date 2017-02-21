@@ -22,7 +22,7 @@
 % collapse - Change frequency of data. String. 'weekly','monthly','quarterly','annual'
 % rows - Number of dates returned. Integer.
 % type - Type of data to return. Leave blank for time series. 'raw' for a cell array.
-% authcode - Authentication token used for continued API access. String.
+% api_key - Api key used for continued API access. String.
 % Returns:
 % If type is blank or type = 'ts'
 % timeseries - If only one time series in the dataset.
@@ -46,7 +46,7 @@ function [output headers] = get(code, varargin)
     p.addOptional('collapse',[]);
     p.addOptional('rows',[]);
     p.addOptional('type', 'ts');
-    p.addOptional('authcode',Quandl.api_key());
+    p.addOptional('api_key',Quandl.api_key());
     p.addOptional('sort_order', 'desc');
     p.parse(code,varargin{:})
     start_date = p.Results.start_date;
@@ -72,7 +72,7 @@ function [output headers] = get(code, varargin)
         error('Quandl:Depenency', strcat(error_msg, ' Please see http://www.quandl.com/help/matlab for more information, or pick another output type.'));
     end
 
-    authcode = p.Results.authcode;
+    api_key = p.Results.api_key;
     params = containers.Map();
     if strcmp(class(code), 'char') || (strcmp(class(code), 'cell') && prod(size(code)) == 1)
         if strcmp(class(code), 'cell')
@@ -98,10 +98,10 @@ function [output headers] = get(code, varargin)
     params('sort_order') = p.Results.sort_order;
     % string
     % Check for authetication token in inputs or in memory.
-    if size(authcode) == 0
+    if size(api_key) == 0
         'It would appear you arent using an authentication token. Please visit http://www.quandl.com/help/matlab or your usage may be limited.'
     else
-        params('auth_token') = authcode;
+        params('api_key') = api_key;
     end
     % Adding API options.
     if size(start_date)

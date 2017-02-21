@@ -1,5 +1,5 @@
 function output = search(query, varargin)
-
+    warning('This function is on route to be deprecated')
     % Parse input.
     p = inputParser;
     p.addRequired('query');
@@ -7,7 +7,7 @@ function output = search(query, varargin)
     p.addOptional('source','');
     p.addOptional('silent',false);
     p.addOptional('results',3);
-    p.addOptional('authcode',Quandl.auth());
+    p.addOptional('api_key',Quandl.api_key());
     p.parse(query,varargin{:})
     params = containers.Map();
     params('page') = int2str(p.Results.page);
@@ -17,9 +17,9 @@ function output = search(query, varargin)
     end
     silent = p.Results.silent;
     results = p.Results.results;
-    authcode = p.Results.authcode;
-    if size(authcode) > 0
-        params('auth_token') = authcode;
+    api_key = p.Results.api_key;
+    if size(api_key) > 0
+        params('api_key') = api_key;
     end
     params('query') = regexprep(query, ' ', '+');
     path = 'datasets.xml';

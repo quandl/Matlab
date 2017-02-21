@@ -10,13 +10,14 @@ function output = api(path, varargin)
   version = p.Results.version;
   http = p.Results.http;
   params = p.Results.params;
-  headers = [struct('name','Request-Source','value','matlab') struct('name','Request-Version','value','2.0.0')];
-  if size(Quandl.api_key()) ~= 0
+  headers = [struct('name','Request-Source','value','matlab') struct('name','Request-Version','value','2.1.0')];
+  
+  if isKey(params, 'api_key')
+    headers = [headers struct('name', 'X-Api-Token', 'value', params('api_key'))];
+  elseif size(Quandl.api_key()) ~= 0
     params('api_key') = Quandl.api_key();
     headers = [headers struct('name', 'X-Api-Token', 'value', Quandl.api_key())];
   end
-  % params('request_source') = 'matlab';
-  % params('request_version') = '1.1.2';
 
   url = strcat('https://www.quandl.com/api/', version, '/', path, '?');
   
