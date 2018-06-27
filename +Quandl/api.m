@@ -24,10 +24,20 @@ function output = api(path, varargin)
   param_keys = params.keys;
   param_values = params.values;
   for i = 1:length(params.keys)
-    if (length(param_values{i}) > 1) & (~strcmp(class(param_values{i}), 'char'))
+    if ((length(param_values{i}) > 1) & (~strcmp(class(param_values{i}), 'char'))) | strcmp(class(param_values{i}), 'containers.Map')
       p_values = param_values{i};
-      for j = 1:length(p_values)
-        url = strcat(url, '&', param_keys{i}, '[]=', p_values{j});
+      if strcmp(class(p_values), 'cell')
+        url = strcat(url, '&', param_keys{i}, '=', strjoin(p_values, ','));
+      elseif strcmp(class(p_values), 'containers.Map')
+        ckeys = keys(p_values);
+        cvalues = values(p_values);
+        for j = 1:length(ckeys)
+          if (length(cvalues{j}) > 1) & (~strcmp(class(cvalues{j}), 'char'))
+            url = strcat(url, '&', param_keys{i}, '.', ckeys{j}, '=', strjoin(cvalues{j}, ','));
+          else
+            url = strcat(url, '&', param_keys{i}, '.', ckeys{j}, '=', cvalues{j});
+          end
+        end
       end
     else
       url = strcat(url, '&', param_keys{i}, '=', param_values{i});
