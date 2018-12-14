@@ -34,12 +34,7 @@ function output = datatable(table_code, varargin)
   end
   if sum(size(out_table) == [0 0]) == 2
     api_path = strcat('datatables/', table_code, '.csv');
-    response = Quandl.api(api_path, 'params', params, 'version', 'v3');
-    tempfile_name = tempname;
-    fileID = fopen(tempfile_name,'w');
-    fprintf(fileID,response);
-    fclose(fileID);
-    out_table = readtable(tempfile_name);
+    out_table = Quandl.api(api_path, 'params', params, 'version', 'v3');
   end
 
   output = out_table;

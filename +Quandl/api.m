@@ -10,13 +10,18 @@ function output = api(path, varargin)
   version = p.Results.version;
   http = p.Results.http;
   params = p.Results.params;
-  headers = [struct('name','Request-Source','value','matlab') struct('name','Request-Version','value','2.1.0')];
+
+  source_header = matlab.net.http.HeaderField('Request-Source','matlab');
+  version_header = matlab.net.http.HeaderField('Request-Version','2.1.0');
+  headers = [source_header version_header];
+
+  % headers = [struct('name','Request-Source','value','matlab') struct('name','Request-Version','value','2.1.0')];
   
   if isKey(params, 'api_key')
-    headers = [headers struct('name', 'X-Api-Token', 'value', params('api_key'))];
+    headers = [headers matlab.net.http.HeaderField('X-Api-Token',params('api_key'))];
   elseif size(Quandl.api_key()) ~= 0
     params('api_key') = Quandl.api_key();
-    headers = [headers struct('name', 'X-Api-Token', 'value', Quandl.api_key())];
+    headers = [headers matlab.net.http.HeaderField('X-Api-Token',Quandl.api_key())];
   end
 
   url = strcat('https://www.quandl.com/api/', version, '/', path, '?');
@@ -43,23 +48,25 @@ function output = api(path, varargin)
       url = strcat(url, '&', param_keys{i}, '=', param_values{i});
     end
   end
-
+  url
   if length(regexp(path, '.csv'))
-    [response, extras] = urlread2.urlread2(url, 'GET', '', headers);
+    method = matlab.net.http.RequestMethod.GET;
+    request = matlab.net.http.RequestMessage(method, headers);
+    response = send(request, url);
   elseif length(regexp(path, '.xml'))
     output = xmlread(url);
     return
   end
   
-  status_regex = regexp(cellstr(extras.allHeaders.Response), '200', 'match');
-  if isempty(status_regex{1})
-    error('Quandl:api', response)
+  if ~strcmp(response.StatusCode, 'OK')
+    error('Quandl:api', response.Body.Data.message{1})
   end
-  if isfield(extras.allHeaders, 'Cursor_ID')
-    params('qopts.cursor_id') = char(extras.allHeaders.Cursor_ID);
-    params('qopts.exclude_column_names') = 'true';
+  output = response.Body.Data;
+  if ~isempty(response.getFields('Cursor_ID'))
+    params('qopts.cursor_id') = char(response.getFields('Cursor_ID').Value);
     temp_response = Quandl.api(path, 'params', params, 'http', http, 'version', version);
-    response = sprintf('%s%s',response , temp_response{2:end});
+    output = vertcat(output, temp_response);
+    % output = [output, temp_response];
   end
-  output = response;
+  
 end

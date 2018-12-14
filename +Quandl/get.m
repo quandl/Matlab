@@ -88,12 +88,7 @@ function [output headers] = get(code, varargin)
         end
         path = strcat('datasets/', code, '.csv');
     elseif strcmp(class(code), 'cell') 
-        code = regexprep(code, '/', '.');
-        for i = 2:length(code)
-            code{i} = strcat(',', code{i});
-        end
-        params('columns') = [code{:}];
-        path = 'multisets.csv';
+        error('Quandl:Deprecated', 'Only one time series may be queried for at a time.');
     end
     params('sort_order') = p.Results.sort_order;
     % string
@@ -119,30 +114,27 @@ function [output headers] = get(code, varargin)
     if size(rows)
         params('rows') = num2str(rows);
     end
-    % Loading csv and checking if it exists.
-    % try
+
     csv = Quandl.api(path, 'params', params);
-    % catch
-    %     error('Quandl:code','Code does not exist.')
-    % end
+
     % Parsing input to be passed as a time series.
-    csv = strread(csv,'%s','delimiter','\n');
-    pattern = '("[^"]*"|[^,]*)';
-    try
-        headers = regexp(csv{1}, pattern, 'match');
-    catch exception
-        error('Quandl returned an empty CSV file. (Invalid Code Likely)');
-    end
-    
-    rowz = length(csv)-1;
-    if rowz == 0
-        error('Dataset is empty')
-    end
-    columns = length(headers);
-    if columns > 1001 && length(regexp(string,'multisets','match')) > 0
-        'Maximum column length for multisets is 1000 columns.'
-        headers = headers(1:101);
-    end
+    output = csv
+    return
+
+    if strcmp(type, 'table')
+        output = csv
+        return
+    elseif strcmp(type, 'ts')
+        col_names = data.Properties.VariableNames
+        ts = timeseries(data(:,col_names{2}),data(:,col_names{1}),'name',col_names{2});
+        if length(col_names) > 2
+            output = tscollection({ts},'name',code);
+            for i = 2:(length(col_names)-1)
+                output = addts(output,flipud(data(:,col_names{i+1})),col_names{i+1});
+            end
+        else
+            output = ts;
+        end
 
     for i = 1:rowz
         temp = textscan(csv{i+1}(12:end), '%f', 'Delimiter',',');
