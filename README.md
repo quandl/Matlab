@@ -15,12 +15,6 @@ Download the folder "+Quandl" into the directory of your choice. Then within MAT
 
 Two things to note, the '+' in "+Quandl" is important in the folder name. It tells Matlab to recognize get.m and auth.m as part of the Quandl package. Secondly, make sure you don't add the "+Quandl" folder in set path. You should be adding the folder that contains it.
 
-### Dependencies ###
-
-This package now REQUIRES urlread2. It can be found [here](http://www.mathworks.com/matlabcentral/fileexchange/35693-urlread2).
-
-Unzip the package and place it in the same directory as +Quandl in the folder +urlread2.
-
 ## Usage ##
 
 Once you've found the data you'd like to load into MATLAB on Quandl, copy the Quandl code from the description box and past it into the function.
@@ -52,15 +46,11 @@ There are four options for which datatype you would like your data returned as, 
 	Quandl.get('NSE/OIL','type','ts')
 
 * **Timeseries (default)**: returns a timeseries if only 1 column in data, tscollection if more. `('type','ts')`
-* **Financial timeseries** :`('type','fints')`
-* **CSV string**: `('type','ASCII')`
+* **Timetable** :`('type','ttable')`
+* **Table**: `('type', 'table')`
 * **DataMatrix**: `('type','data')`
-* **Cell Strings**: `('type','cellstr')`
 
-As well a cell string array is returned with the headers. The syntax is as follows:
 
-    output = Quandl.get('NSE/OIL','type','fints')
-    [output headers] = Quandl.get('NSE/OIL','type','fints')
 
 
 ## Examples ##
@@ -87,15 +77,6 @@ Parameters are specific to each datatable. This datatable's filter parameters ar
 This call returns all data for Apple and Microsoft:
 
     data = Quandl.datatable('ZACKS/EE', 'ticker', {'AAPL', 'MSFT'})
-
-## ALPHA ##
-
-You can now search inside the Matlab Console
-
-    >> Quandl.search('crude oil');
-    >> Quandl.search('crude oil', 'results', 10, 'page', 3);
-
-It is currently in **ALPHA** and only returns an xml object to the top node of the query results.
 
 ## Additional Resources ##
     

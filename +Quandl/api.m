@@ -12,7 +12,7 @@ function output = api(path, varargin)
   params = p.Results.params;
 
   source_header = matlab.net.http.HeaderField('Request-Source','matlab');
-  version_header = matlab.net.http.HeaderField('Request-Version','2.1.0');
+  version_header = matlab.net.http.HeaderField('Request-Version','3.0.0');
   headers = [source_header version_header];
 
   % headers = [struct('name','Request-Source','value','matlab') struct('name','Request-Version','value','2.1.0')];
@@ -48,7 +48,7 @@ function output = api(path, varargin)
       url = strcat(url, '&', param_keys{i}, '=', param_values{i});
     end
   end
-  url
+  
   if length(regexp(path, '.csv'))
     method = matlab.net.http.RequestMethod.GET;
     request = matlab.net.http.RequestMessage(method, headers);
@@ -66,7 +66,6 @@ function output = api(path, varargin)
     params('qopts.cursor_id') = char(response.getFields('Cursor_ID').Value);
     temp_response = Quandl.api(path, 'params', params, 'http', http, 'version', version);
     output = vertcat(output, temp_response);
-    % output = [output, temp_response];
   end
   
 end

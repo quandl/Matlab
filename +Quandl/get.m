@@ -91,6 +91,9 @@ function [output headers] = get(code, varargin)
         error('Quandl:Deprecated', 'Only one time series may be queried for at a time.');
     end
     params('sort_order') = p.Results.sort_order;
+    if strcmp(type, 'ts')
+        params('sort_order') = 'desc';
+    end
     % string
     % Check for authetication token in inputs or in memory.
     if size(api_key) == 0
@@ -115,77 +118,31 @@ function [output headers] = get(code, varargin)
         params('rows') = num2str(rows);
     end
 
-    csv = Quandl.api(path, 'params', params);
-
+    api_response = Quandl.api(path, 'params', params);
+    col_names = api_response.Properties.VariableNames;
     % Parsing input to be passed as a time series.
-    output = csv
-    return
 
     if strcmp(type, 'table')
-        output = csv
+        output = api_response;
         return
     elseif strcmp(type, 'ts')
-        col_names = data.Properties.VariableNames
-        ts = timeseries(data(:,col_names{2}),data(:,col_names{1}),'name',col_names{2});
+        ts = timeseries(table2array(api_response(:, col_names{2})), char(table2array(api_response(:,col_names{1}))), 'name', col_names{2});
         if length(col_names) > 2
             output = tscollection({ts},'name',code);
             for i = 2:(length(col_names)-1)
-                output = addts(output,flipud(data(:,col_names{i+1})),col_names{i+1});
+                output = addts(output,table2array(api_response(:,col_names{i+1})),col_names{i+1});
             end
         else
             output = ts;
         end
-
-    for i = 1:rowz
-        temp = textscan(csv{i+1}(12:end), '%f', 'Delimiter',',');
-        temp = temp{1};
-        temp = transpose(temp);
-        if strcmp(csv{i+1}(end),',') %Matlab does not catch delimiters at end of line.
-            temp = [temp, NaN];
-        end
-        if i == 1
-            DATE = csv{i+1}(1:10);
-        else
-            DATE = char(DATE,csv{i+1}(1:10));
-        end
-        data(i,:) = temp;
-    end
-    DATE = cellstr(DATE);
-    temp = size(type);
-    % Creating time series from raw data.
-    if temp(1) == 0 || strcmp(type, 'ts')
-        ts = timeseries(data(:,1),DATE,'name',headers{2});
-        if columns > 2
-            output = tscollection({ts},'name',code);
-            for i = 2:(columns-1)
-                output = addts(output,flipud(data(:,i)),headers{i+1});
-            end
-        else
-            output = ts;
-        end
-    elseif strcmp(type, 'cell') | strcmp(type, 'cellstr')
-        % output = [transpose(headers);DATE, num2cell(data)];
-        % output = [transpose(headers);DATE, data];
-        output = [DATE num2cell(data)];
-
-    elseif strcmp(type, 'table')
-        output = cell2table([DATE num2cell(data)], 'VariableNames', matlab.lang.makeValidName(headers));
-
-    elseif strcmp(type, 'ASCII')
-        output = csv;
-    elseif strcmp(type, 'fints')
-        sanitized_headers = regexprep(regexprep(headers(2:end),' ','_'), '[^A-Z0-9a-z_]', '')
-        for i = 1:length(sanitized_headers)
-            sanitized_header = sanitized_headers{i};
-            results = regexp(sanitized_header, '^(\d+)(.+)', 'tokens');
-            if length(results) > 0
-                sanitized_header = [results{1}{2} results{1}{1}];
-            end
-            sanitized_headers{i} = sanitized_header;
-        end
-        output = fints(datenum(DATE), data, sanitized_headers);
+    elseif strcmp(type, 'ttable')
+        output = table2timetable(api_response);
+        return
     elseif strcmp(type, 'data')
-        output = [datenum(DATE) data];
+        datenum_data = datenum(table2array(api_response(:, col_names{1})));
+        float_data = table2array(removevars(api_response, col_names{1}));
+        output = [datenum_data float_data];
+        return
     else
         error('Invalid format');
     end
