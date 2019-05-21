@@ -15,11 +15,6 @@ function [met, missing] = dependencies(varargin)
             dependencies_missing = [ dependencies_missing, 'ts' ];
             dependencies_met = false;
         end
-        if ~exist('fints')
-            dependencies_missing = [ dependencies_missing, 'fints' ];
-            dependencies_met = false;
-        end
-        
     end
 
     met = dependencies_met;

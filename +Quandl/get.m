@@ -66,8 +66,6 @@ function [output headers] = get(code, varargin)
         switch type
         case 'ts'
             error_msg = 'This output type requires the Econometric Toolbox.';
-        case 'fints'
-            error_msg = 'This output type requires the Financial Toolbox.';
         end
         error('Quandl:Depenency', strcat(error_msg, ' Please see http://www.quandl.com/help/matlab for more information, or pick another output type.'));
     end
