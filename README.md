@@ -70,13 +70,17 @@ It returns data in a table.
 
 ### Parameters ###
 
-Parameters are specific to each datatable. This datatable's filter parameters are `ticker`, `per_type`, `per_end_date` and `qopts.columns`. The following function call returns the columns, per_end_date, per_type and eps_meant_est for all rows which ticker = AAPL.
+Parameters are specific to each datatable. This datatable's filter parameters are `ticker`, `per_type`, `per_end_date`. The following function call returns the columns, per_end_date, per_type and eps_meant_est for all rows which ticker = AAPL.
 
-    data = Quandl.datatable('ZACKS/EE', 'ticker', 'AAPL', 'qopts.columns', {'per_end_date', 'per_type', 'eps_mean_est'})
+    data = Quandl.datatable('ZACKS/EE', 'ticker', 'AAPL', 'qopts', containers.Map('columns', {'per_end_date', 'per_type', 'eps_mean_est'}, 'UniformValues', false))
 
 This call returns all data for Apple and Microsoft:
 
     data = Quandl.datatable('ZACKS/EE', 'ticker', {'AAPL', 'MSFT'})
+
+This call returns all data for Apple where `per_end_date` is greater than `2018-06-01`:
+
+    data = Quandl.datatable('ZACKS/EE', 'ticker', 'AAPL', 'per_end_date', containers.Map('gt', '2018-06-01'))
 
 ## Additional Resources ##
     
