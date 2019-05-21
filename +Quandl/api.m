@@ -14,8 +14,6 @@ function output = api(path, varargin)
   source_header = matlab.net.http.HeaderField('Request-Source','matlab');
   version_header = matlab.net.http.HeaderField('Request-Version','3.0.0');
   headers = [source_header version_header];
-
-  % headers = [struct('name','Request-Source','value','matlab') struct('name','Request-Version','value','2.1.0')];
   
   if isKey(params, 'api_key')
     headers = [headers matlab.net.http.HeaderField('X-Api-Token',params('api_key'))];
