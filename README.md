@@ -1,11 +1,10 @@
 MATLAB-package
 =========
 
-This is Quandl's MATLAB Package
+Quandl is no longer updating its MATLAB Package. Please refer to MathWorks for
+updates, which can be [found here](https://www.mathworks.com/help/datafeed/quandl-1.html).
 
 License: MIT
-
-For more information please contact raymond@quandl.com
 
 ## Installation ##
 
