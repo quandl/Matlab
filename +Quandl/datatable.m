@@ -45,3 +45,4 @@ function output = datatable(table_code, varargin)
   output = out_table;
 
 end
+disp('This is the output of data table')
